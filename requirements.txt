@@ -1,0 +1,7 @@
+selenium
+langchain
+langchain_community
+langchain_openai
+dotenv
+load_dotenv
+openai
