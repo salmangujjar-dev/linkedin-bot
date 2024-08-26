@@ -5,3 +5,7 @@ langchain_openai
 dotenv
 load_dotenv
 openai
+fastapi
+pydantic
+uvicorn
+flake8
