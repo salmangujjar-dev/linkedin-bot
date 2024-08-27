@@ -30,5 +30,6 @@ class LinkedInBot:
             time.sleep(2)
         except Exception as e:
             print("Error occurred: ", e)
+            raise e
         finally:
             self.driver.quit()

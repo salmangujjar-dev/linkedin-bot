@@ -1,0 +1,7 @@
+# Python-related
+__pycache__
+venv
+.env.example
+.gitignore
+README.md
+Dockerfile

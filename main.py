@@ -4,14 +4,15 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, field_validator
 from linkedin_bot import LinkedInBot
 from urllib.parse import urlparse
+from typing import List
 
 load_dotenv()
 
 app = FastAPI()
 
 class LinkedInMessage(BaseModel):
-    urls: list[str]
-    messages: list[str]
+    urls: List[str]
+    messages: List[str]
     
     @field_validator('urls', 'messages')
     def check_length(cls, v):
