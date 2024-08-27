@@ -10,3 +10,4 @@ python-dotenv==1.0.1
 selenium==4.23.1
 uvicorn==0.30.6
 webdriver-manager==4.0.2
+asyncio==3.4.3

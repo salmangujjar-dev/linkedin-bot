@@ -1,18 +1,22 @@
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 from linkedin_bot import LinkedInBot
 from urllib.parse import urlparse
 from typing import List
 
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(
+    title="LinkedIn Bot API",
+    description="An API for automating LinkedIn interactions",
+    version="1.0.0"
+)
 
 class LinkedInMessage(BaseModel):
-    urls: List[str]
-    messages: List[str]
+    urls: List[str] = Field(..., description="List of LinkedIn profile URLs to send invites to")
+    messages: List[str] = Field(..., description="List of personalized messages for each invite")
     
     @field_validator('urls', 'messages')
     def check_length(cls, v):
@@ -35,8 +39,21 @@ class LinkedInMessage(BaseModel):
         return v
 
 
-@app.post("/linkedin/send_invites")
+@app.post("/linkedin/send_invites", 
+          response_model=dict,
+          summary="Send LinkedIn invites",
+          description="Sends connection invites to specified LinkedIn profiles with personalized messages")
 async def send_invites(message_data: LinkedInMessage):
+    """
+    Send LinkedIn invites to multiple profiles.
+
+    - **urls**: List of LinkedIn profile URLs to send invites to
+    - **messages**: Corresponding list of personalized messages for each invite
+
+    Returns:
+        A dictionary with status and message indicating success or failure
+    """
+    
     bot = LinkedInBot()
     
     session_key = os.getenv('LINKEDIN_EMAIL')
@@ -46,7 +63,7 @@ async def send_invites(message_data: LinkedInMessage):
         raise HTTPException(status_code=500, detail="LinkedIn credentials not found in environment variables.")
     
     try:
-        bot.run(session_key, session_password, message_data.urls, message_data.messages)
+        await bot.run(session_key, session_password, message_data.urls, message_data.messages)
         return {"status": "success", "message": "Messages sent successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
